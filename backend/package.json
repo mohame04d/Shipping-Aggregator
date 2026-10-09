@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",
+    "dotenv": "^18.0.6",
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@prisma/prisma7": "^7.10.0",
     "prisma": "^8.0.0-rc.17"
   }
 }

@@ -4,5 +4,176 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  name         String
+  email        String         @unique
+  passwordHash String
+  phone        String?        @unique
+  role         Role           @default(USER)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  addresses    Address[]
+  shipments    Shipment[]
+  notifications Notification[]
+  refreshTokens RefreshToken[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+
+  label      String
+  country    String
+  city       String
+  street     String
+  postalCode String
+  phone      String
+  longitude  Float?
+  latitude   Float?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sentShipments     Shipment[] @relation("SenderAddress")
+  receivedShipments Shipment[] @relation("ReceiverAddress")
+}
+
+model Shipment {
+  id                Int      @id @default(autoincrement())
+
+  userId            Int
+  user              User     @relation(fields: [userId], references: [id])
+
+  senderAddressId   Int
+  senderAddress     Address  @relation("SenderAddress", fields: [senderAddressId], references: [id])
+
+  receiverAddressId Int
+  receiverAddress   Address  @relation("ReceiverAddress", fields: [receiverAddressId], references: [id])
+
+  weight            Float
+  length            Float
+  width             Float
+  height            Float
+
+  shippingType      ShippingType @default(STANDARD)
+  status            Status       @default(PENDING)
+
+  currency          String
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  quotes            ShippingQuote[]
+  trackingEvents    TrackingEvent[]
+}
+
+enum ShippingType {
+  STANDARD
+  EXPRESS
+}
+
+enum Status {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+model ShippingProvider {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quotes    ShippingQuote[]
+  pricingRules PricingRule[]
+}
+
+model ShippingQuote {
+  id              Int      @id @default(autoincrement())
+
+  shipmentId      Int
+  shipment        Shipment @relation(fields: [shipmentId], references: [id])
+
+  providerId      Int
+  provider        ShippingProvider @relation(fields: [providerId], references: [id])
+
+  price           Float
+  currency        String
+  estimateDaysMin Int
+  estimateDaysMax Int
+  serviceType     String
+  expiresAt       DateTime
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PricingRule {
+  id                Int      @id @default(autoincrement())
+
+  providerId        Int
+  provider          ShippingProvider @relation(fields: [providerId], references: [id])
+
+  shippingType      ShippingType @default(STANDARD)
+  minWeight        Float?
+  maxWeight        Float?
+  basePrice        Float
+  pricePerKg       Float
+  volumetricDivisor Float?
+  surcharge         Float?
+  isActive          Boolean  @default(true)
+}
+
+model TrackingEvent {
+  id          Int      @id @default(autoincrement())
+
+  shipmentId  Int
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+
+  status      Status   @default(SHIPPED)
+  location    String?
+  description String?
+  occurredAt  DateTime
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  type      String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+
+  tokenHash  String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
 }
