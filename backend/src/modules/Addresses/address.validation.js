@@ -39,5 +39,3 @@ export const addressIdSchema = z.object({
   }),
   query: z.object({}),
 });
-
-export {createAddressSchema, updateAddressSchema, addressIdSchema}
