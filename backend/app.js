@@ -6,7 +6,9 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './src/config/swagger.js';
 
-import router from './src/modules/Auth/auth.route.js';
+import authRouter from './src/modules/Auth/auth.route.js';
+import addressRouter from './src/modules/Auth/auth.route.js';
+import shipmentRouter from './src/modules/shipment/shipment.route.js'
 
 const app = express();
 
@@ -32,7 +34,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 //Routes
-app.use('/api/users',router)
+app.use('/api/users', authRouter)
+app.use('/api/address', addressRouter)
+app.use('/api/shipment', shipmentRouter)
 
 
 export default app;
