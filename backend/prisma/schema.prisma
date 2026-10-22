@@ -97,6 +97,8 @@ model ShippingProvider {
   name      String
   code      String   @unique
   isActive  Boolean  @default(true)
+  estimateDaysMin Int
+  estimateDaysMax Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

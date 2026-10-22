@@ -9,6 +9,7 @@ import swaggerSpec from './src/config/swagger.js';
 import authRouter from './src/modules/Auth/auth.route.js';
 import addressRouter from './src/modules/Auth/auth.route.js';
 import shipmentRouter from './src/modules/shipment/shipment.route.js'
+import quoteRouter from './src/modules/quote/quote.route.js';
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/users', authRouter)
 app.use('/api/address', addressRouter)
 app.use('/api/shipment', shipmentRouter)
+app.use('/api/quote', quoteRouter)
 
 
 export default app;
