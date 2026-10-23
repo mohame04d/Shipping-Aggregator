@@ -10,6 +10,7 @@ import authRouter from './src/modules/Auth/auth.route.js';
 import addressRouter from './src/modules/Auth/auth.route.js';
 import shipmentRouter from './src/modules/shipment/shipment.route.js'
 import quoteRouter from './src/modules/quote/quote.route.js';
+import providerRouter from './src/modules/provider/provider.route.js'
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/users', authRouter)
 app.use('/api/address', addressRouter)
 app.use('/api/shipment', shipmentRouter)
 app.use('/api/quote', quoteRouter)
+app.use('/api/provider', providerRouter)
 
 
 export default app;
