@@ -12,6 +12,7 @@ import shipmentRouter from './src/modules/shipment/shipment.route.js'
 import quoteRouter from './src/modules/quote/quote.route.js';
 import providerRouter from './src/modules/provider/provider.route.js';
 import pricingRouter from './src/modules/pricing/pricing.route.js';
+import trackingRouter from './src/modules/tracking/tracking.route.js';
 
 const app = express();
 
@@ -37,12 +38,13 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 //Routes
-app.use('/api/users', authRouter)
-app.use('/api/address', addressRouter)
-app.use('/api/shipment', shipmentRouter)
-app.use('/api/quote', quoteRouter)
-app.use('/api/provider', providerRouter)
-app.use('/api/pricing', pricingRouter)
+app.use('/api/users', authRouter);
+app.use('/api/address', addressRouter);
+app.use('/api/shipment', shipmentRouter);
+app.use('/api/quote', quoteRouter);
+app.use('/api/provider', providerRouter);
+app.use('/api/pricing', pricingRouter);
+app.use('/api/tracking', trackingRouter);
 
 
 export default app;
