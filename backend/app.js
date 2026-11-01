@@ -13,6 +13,7 @@ import quoteRouter from './src/modules/quote/quote.route.js';
 import providerRouter from './src/modules/provider/provider.route.js';
 import pricingRouter from './src/modules/pricing/pricing.route.js';
 import trackingRouter from './src/modules/tracking/tracking.route.js';
+import notificationRouter from './src/modules/notification/notification.route.js';
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/api/quote', quoteRouter);
 app.use('/api/provider', providerRouter);
 app.use('/api/pricing', pricingRouter);
 app.use('/api/tracking', trackingRouter);
+app.use('/api/notification', notificationRouter);
 
 
 export default app;

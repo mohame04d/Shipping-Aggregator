@@ -1,41 +1,68 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import http from "http";
+import { Server } from "socket.io";
 
-dotenv.config({ path: './src/config/.env' });
-
-import app from './app.js';
-import prisma from './src/config/prisma.js';
-
-process.on('uncaughtException', err => {
-    console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-    console.log(err.message, err.stack);
-
-    server.close(async () => {
-        await prisma.$disconnect();
-        process.exit(1);
-    });
+dotenv.config({
+  path: "./src/config/.env",
 });
 
-const port = process.env.PORT || 3000;
-const server = app.listen(port, () => {
-    console.log(`App running on port ${port}...`);
+const [{ default: app }, { default: prisma }, { default: initialSocket }] =
+  await Promise.all([
+    import("./app.js"),
+    import("./src/config/prisma.js"),
+    import("./src/config/socket.js"),
+  ]);
+
+const server = http.createServer(app);
+
+// Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL
+      ? process.env.CLIENT_URL.split(",")
+      : ["http://localhost:5173"],
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
+  },
+
+  pingTimeout: 60000,
+  pingInterval: 25000,
 });
 
-process.on('unhandledRejection', err => {
-    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    console.log(err.name, err.message, err.stack);
+app.set("io", io);
 
-    server.close(async () => {
-        await prisma.$disconnect();
-        process.exit(1);
-    });
+initialSocket(io);
+
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
-process.on('SIGTERM', () => {
-    console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+process.on("uncaughtException", (error) => {
+  console.error("UNCAUGHT EXCEPTION:", error);
 
-    server.close(async () => {
-        await prisma.$disconnect();
-        console.log('💥 Process terminated!');
-        process.exit(0);
-    });
+  server.close(async () => {
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+});
+
+process.on("unhandledRejection", (error) => {
+  console.error("UNHANDLED REJECTION:", error);
+
+  server.close(async () => {
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+});
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received. Shutting down...");
+
+  io.close(async () => {
+    await prisma.$disconnect();
+    console.log("Database disconnected");
+    process.exit(0);
+  });
 });
