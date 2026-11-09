@@ -1,16 +1,32 @@
-import QuoteService from "./quote.service";
-import catchAsync from "../../utils/catchAsync";
+import QuoteService from "./quote.service.js";
+import catchAsync from "../../utils/catchAsync.js";
+import quoteQueue from "../../queues/quote.queue.js";
 
-const quoteService= new QuoteService()
+const quoteService = new QuoteService();
 
-export const estimateShipment= catchAsync((req,res,next)=>{
-    return quoteService.estimateShipment(req,res,next)
-})
+export const estimateShipment = catchAsync(async (req, res, next) => {
+    const shipmentId = Number(req.params.shipmentId);
+    const userId = Number(req.user.id);
 
-export const calculateQuote= catchAsync((req,res,next)=>{
-    return quoteService.calculateQuote(req,res,next)
-})
+    const job = await quoteQueue.add("calculate-quotes", {
+        shipmentId,
+        userId,
+    });
 
-export const getShipmentQuotes= catchAsync((req,res,next)=>{
-    return quoteService.getShipmentQuotes(req,res,next)
-})
+    return res.status(202).json({
+        status: "success",
+        message: "Quote calculation started",
+        data: {
+            jobId: job.id,
+            shipmentId,
+        },
+    });
+});
+
+export const calculateQuote = catchAsync((req, res, next) => {
+    return quoteService.calculateQuote(req, res, next);
+});
+
+export const getShipmentQuotes = catchAsync((req, res, next) => {
+    return quoteService.getShipmentQuotes(req, res, next);
+});

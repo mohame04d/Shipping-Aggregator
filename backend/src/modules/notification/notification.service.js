@@ -1,63 +1,37 @@
 import AppError from "../../utils/appError.js";
 import prisma from "../../config/prisma.js";
+import notificationQueue from "../queues/notification.queues.js";
 
+const addNotificationJob = async ({
+  userId,
+  type,
+  title,
+  message,
+}) => {
+  if (!Number.isInteger(userId) || userId <= 0) {
+    throw new Error("Invalid userId");
+  }
+
+  if (!type || !title || !message) {
+    throw new Error("Notification data is required");
+  }
+
+  const job = await notificationQueue.add(
+    "create-notification",
+    {
+      userId,
+      type,
+      title,
+      message,
+    }
+  );
+
+  return {
+    jobId: job.id,
+    status: "QUEUED",
+  };
+};
 export default class NotificationService {
-  sendNotification(io, notification) {
-    if (!io) return;
-
-    io.to(`user:${notification.userId}`).emit(
-      "notification",
-      notification
-    );
-  }
-
-  async createNotification(req, res) {
-    const { userId, type, title, message } = req.body;
-
-    const parsedUserId = Number(userId);
-
-    if (!Number.isInteger(parsedUserId) || parsedUserId <= 0) {
-      throw new AppError("Invalid user ID", 400);
-    }
-
-    if (
-      typeof type !== "string" ||
-      !type.trim() ||
-      typeof title !== "string" ||
-      !title.trim() ||
-      typeof message !== "string" ||
-      !message.trim()
-    ) {
-      throw new AppError("Type, title and message are required", 400);
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: parsedUserId },
-      select: { id: true },
-    });
-
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
-
-    const notification = await prisma.notification.create({
-      data: {
-        userId: parsedUserId,
-        type: type.trim(),
-        title: title.trim(),
-        message: message.trim(),
-      },
-    });
-
-    const io = req.app.get("io");
-    this.sendNotification(io, notification);
-
-    return res.status(201).json({
-      status: "success",
-      message: "Notification created successfully",
-      data: { notification },
-    });
-  }
 
   async listNotifications(req, res) {
     const userId = req.user.id;

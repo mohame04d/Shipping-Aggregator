@@ -8,9 +8,8 @@ import {
 
 import {
   protect,
-  restrictTo,
+ restrictedTo,
 } from "../Auth/auth.controller.js";
-
 import validate from "../../middlewares/validate.middleware.js";
 
 import {
@@ -21,13 +20,6 @@ import {
 const router = express.Router();
 
 router.use(protect);
-
-router.post(
-  "/",
-  restrictTo("ADMIN"),
-  validate(createNotificationSchema),
-  createNotification
-);
 
 router.get(
   "/",

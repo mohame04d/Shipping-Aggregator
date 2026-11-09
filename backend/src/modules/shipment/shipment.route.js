@@ -1,8 +1,8 @@
 import express from 'express'
-import { protect } from '../Auth/auth.controller';
-import { calculateChargeableWeight, changeShipmentStatus, createShipment, getShipment, listShipments } from './shipment.controller';
-import validate from '../../middlewares/validate.middleware';
-import { createShipmentSchema, shipmentIdSchema, updateShipmentStatus , calculateWeightSchema} from '../shipment/shipment.validation';
+import { protect } from '../Auth/auth.controller.js';
+import { calculateChargeableWeight, changeShipmentStatus, createShipment, getShipment, listShipments } from './shipment.controller.js';
+import validate from '../../middlewares/validate.middleware.js';
+import { createShipmentSchema, shipmentIdSchema, updateShipmentStatus , calculateWeightSchema} from '../shipment/shipment.validation.js';
 
 const router= express.Router();
 

@@ -1,5 +1,5 @@
-import AppError from "../../utils/appError";
-import prisma from "../../config/prisma";
+import AppError from "../../utils/appError.js";
+import prisma from "../../config/prisma.js";
 import { date } from "zod";
 
 export default class ShipmentService {

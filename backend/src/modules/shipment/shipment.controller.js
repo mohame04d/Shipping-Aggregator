@@ -1,5 +1,5 @@
-import ShipmentService from "./shipment.service";
-import catchAsync from "../../utils/catchAsync";
+import ShipmentService from "./shipment.service.js";
+import catchAsync from "../../utils/catchAsync.js";
 
 const shipmentService= new ShipmentService();
 
