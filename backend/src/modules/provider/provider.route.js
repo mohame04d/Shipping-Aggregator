@@ -1,8 +1,8 @@
 import express from 'express';
-import { protect, restrictedTo } from '../Auth/auth.controller';
-import { createProvider, getProviderById, listActiveProviders, updateProvider } from './provider.controller';
-import validate from '../../middlewares/validate.middleware';
-import { createProviderSchema, getProviderSchema, updateProviderSchema } from './provider.validation';
+import { restrictedTo, protect } from '../Auth/auth.controller.js';
+import { createProvider, getProviderById, listActiveProviders, updateProvider } from './provider.controller.js';
+import validate from '../../middlewares/validate.middleware.js';
+import { createProviderSchema, getProviderSchema, updateProviderSchema } from './provider.validation.js';
 
 const router= express.Router();
 

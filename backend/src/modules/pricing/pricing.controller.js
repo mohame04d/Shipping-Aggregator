@@ -1,5 +1,5 @@
-import catchAsync from "../../utils/catchAsync";
-import PricingService from "./pricing.service";
+import catchAsync from "../../utils/catchAsync.js";
+import PricingService from "./pricing.service.js";
 
 const pricingService= new PricingService();
 

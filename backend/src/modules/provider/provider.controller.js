@@ -1,5 +1,5 @@
-import ProviderService from "./provider.service";
-import catchAsync from "../../utils/catchAsync";
+import ProviderService from "./provider.service.js";
+import catchAsync from "../../utils/catchAsync.js";
 
 const providerService= new ProviderService();
 

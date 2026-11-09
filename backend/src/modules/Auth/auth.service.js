@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import prisma from '../../config/prisma.js';
 import AppError from '../../utils/appError.js';
 
@@ -237,6 +237,20 @@ class AuthService {
         return next();
     }
 
+
+    //roles
+    restrictedTo(...roles) {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return next(
+                new AppError("You don't have permission", 403)
+            );
+        }
+
+        next();
+    };
+}
+
     // 10. Logout
     async logOut(req, res, next) {
         const refreshToken = req.cookies?.refreshToken;
@@ -441,4 +455,4 @@ class AuthService {
     }
 }
 
-export default new AuthService();
+export default  AuthService;
