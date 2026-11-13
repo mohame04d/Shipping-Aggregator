@@ -12,6 +12,6 @@ router.post('/', validate(createShipmentSchema), createShipment);
 router.get('/:id', validate(shipmentIdSchema), getShipment);
 router.get('/', listShipments);
 router.get('/pricingRule/:id/calculate-weight', validate(calculateWeightSchema), calculateChargeableWeight);
-router.patch('/:id', validate(updateShipmentStatus), changeShipmentStatus);
+router.patch('/:id/status', validate(updateShipmentStatus), changeShipmentStatus);
 
 export default router;
